@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Desconto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .field {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .result {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cálculo de Desconto</h1>
+        <div class="field">
+            <label for="nf-value">Valor da Nota Fiscal (R$):</label>
+            <input type="number" id="nf-value" value="1000" step="0.01" min="0">
+        </div>
+        <div class="field">
+            <label for="discount-value">Desconto em R$:</label>
+            <input type="number" id="discount-value" step="0.01" min="0">
+        </div>
+        <div class="field">
+            <label for="discount-percent">Desconto em %:</label>
+            <input type="number" id="discount-percent" step="0.01" min="0" max="100">
+        </div>
+        <div class="result">
+            <p>Valor Final: R$ <span id="final-value">0.00</span></p>
+        </div>
+    </div>
+
+    <script>
+        const nfValueInput = document.getElementById('nf-value');
+        const discountValueInput = document.getElementById('discount-value');
+        const discountPercentInput = document.getElementById('discount-percent');
+        const finalValueDisplay = document.getElementById('final-value');
+
+        function updateFromDiscountValue() {
+            const nfValue = parseFloat(nfValueInput.value) || 0;
+            let discountValue = parseFloat(discountValueInput.value) || 0;
+
+            // Limita o desconto para não ser maior que o valor da nota fiscal
+            if (discountValue > nfValue) {
+                discountValue = nfValue;
+                discountValueInput.value = discountValue.toFixed(2);
+            }
+
+            // Atualiza o desconto em %
+            const discountPercent = (discountValue / nfValue) * 100;
+            discountPercentInput.value = discountPercent.toFixed(2);
+
+            // Atualiza o valor final
+            const finalValue = nfValue - discountValue;
+            finalValueDisplay.textContent = finalValue.toFixed(2);
+        }
+
+        function updateFromDiscountPercent() {
+            const nfValue = parseFloat(nfValueInput.value) || 0;
+            let discountPercent = parseFloat(discountPercentInput.value) || 0;
+
+            // Limita a porcentagem para no máximo 100%
+            if (discountPercent > 100) {
+                discountPercent = 100;
+                discountPercentInput.value = discountPercent.toFixed(2);
+            }
+
+            // Atualiza o desconto em R$
+            const discountValue = (discountPercent / 100) * nfValue;
+            discountValueInput.value = discountValue.toFixed(2);
+
+            // Atualiza o valor final
+            const finalValue = nfValue - discountValue;
+            finalValueDisplay.textContent = finalValue.toFixed(2);
+        }
+
+        // Adiciona os eventos para atualização dinâmica
+        discountValueInput.addEventListener('input', updateFromDiscountValue);
+        discountPercentInput.addEventListener('input', updateFromDiscountPercent);
+        nfValueInput.addEventListener('input', () => {
+            updateFromDiscountValue(); // Atualiza quando o valor da nota fiscal muda
+        });
+
+        // Inicializa com valores padrão
+        updateFromDiscountValue();
+    </script>
+</body>
+</html>
